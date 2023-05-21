@@ -4,8 +4,8 @@ import { createError } from "../utils/error.js";
 
 export const verifyToken = (req, res, next) => {
 
-    const authHeader = req.headers.token;
-    console.log( "Token is",req.headers.token);
+    const authHeader = req.headers.authorization;
+    console.log( "Token is",req.headers.authorization);
     if (authHeader) {
         const token = authHeader.split(" ")[1];
         jwt.verify(token, process.env.JWT, (err, user) => {

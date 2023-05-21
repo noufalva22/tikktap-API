@@ -93,7 +93,7 @@ router.get("/", async (req, res) => {
 });
 //GET USER with email id
 
-router.get("/find/:id", async (req, res) => {
+router.get("/find/:id",  async (req, res) => {
 
     try {
         const user = await UserData.find({emailId : req.params.id})

@@ -48,6 +48,10 @@ app.use("/api/paynow", paymentRoute)
 app.use("/api/sendSMS", sendSMS)
 app.use("/api/userLog", UserLog)
 
+app.get('/', (req , res )=>{
+    res.send("Welcome Backend")
+})
+
 app.listen(process.env.PORT || 5000, () => {
     connect()
     console.log("Server is running");

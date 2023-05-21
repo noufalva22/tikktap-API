@@ -5,14 +5,17 @@ import { verifyToken, verifyTokenAndAdmin, verifyTokenAndAuthorization } from ".
 const router = express.Router();
 
 //CREAT
-router.post('/',  async (req, res) => {
+router.post('/', async (req, res) => {
+
     const newOrder = new Order(req.body)
     try {
         const savedOrder = await newOrder.save()
+        console.log("Server 2");
 
         res.status(200).json(savedOrder)
     } catch (error) {
         res.status(500).json(error)
+        console.log(error);
     }
 })
 
@@ -32,7 +35,7 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
 
         res.status(200).json(updatedOrder)
     } catch (error) {
-        res.status(500).json(err)
+        res.status(500).json(error)
 
     }
 
@@ -66,10 +69,23 @@ router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
 
 //GET ALL 
 
-router.get("/", verifyTokenAndAuthorization,  async (req, res) => {
+router.get("/", async (req, res) => {
+    console.log("Get all");
     try {
         const orders = await Order.find();
         res.status(200).json(orders);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+
+//GET ORDER BT ORDERID
+router.get("/:orderID", async (req, res) => {
+    
+    try {
+        const order = await Order.findOne({orderID : req.params.orderID});
+        res.status(200).json(order);
     } catch (err) {
         res.status(500).json(err);
     }
@@ -92,7 +108,7 @@ router.get('/income', verifyTokenAndAdmin, async (req, res) => {
                     sales: "$amount",
                 },
             },
-            {    
+            {
                 $group: {
                     _id: "$month",
                     total: { $sum: "$sales" },
