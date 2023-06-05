@@ -44,24 +44,24 @@ router.put("/:userId/accounts/:accountId", async (req, res) => {
     try {
         const user = await UserData.findById(req.params.userId);
         if (!user) {
-          return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'User not found' });
         }
-    
+
         const account = user.accounts.id(req.params.accountId);
         if (!account) {
-          return res.status(404).json({ message: 'Account not found' });
+            return res.status(404).json({ message: 'Account not found' });
         }
-    
+
         account.link = req.body.link || account.link;
         account.status = req.body.status || account.status;
-    
+
         await user.save();
-    
+
         res.json(user);
-      } catch (err) {
+    } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error' });
-      }
+    }
 
 
 
@@ -93,10 +93,10 @@ router.get("/", async (req, res) => {
 });
 //GET USER with email id
 
-router.get("/find/:id",  async (req, res) => {
+router.get("/find/:id", async (req, res) => {
 
     try {
-        const user = await UserData.find({emailId : req.params.id})
+        const user = await UserData.find({ emailId: req.params.id })
         res.status(200).json(user)
 
     } catch (error) {
@@ -108,7 +108,7 @@ router.get("/find/:id",  async (req, res) => {
 router.get("/get/:id", async (req, res) => {
 
     try {
-        const data = await UserData.findOne({username : req.params.id})
+        const data = await UserData.findOne({ username: req.params.id })
         res.status(200).json(data)
 
     } catch (error) {
@@ -120,13 +120,29 @@ router.get("/get/:id", async (req, res) => {
 router.get("/check/:username", async (req, res) => {
 
     try {
-        const user = await UserData.find({username : req.params.username})
+        const user = await UserData.find({ username: req.params.username })
         res.status(200).json(user)
 
     } catch (error) {
         res.status(500).json(error)
     }
 })
+router.get("/search", async (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    try {
+        const users = await UserData.find({
+            createdAt: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate),
+            },
+        });
+
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
 
 
 export default router

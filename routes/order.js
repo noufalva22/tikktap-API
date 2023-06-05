@@ -43,7 +43,7 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
 
 //DELETE ORDER
 
-router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
+router.delete("/:id",  async (req, res) => {
 
     try {
         await Order.findByIdAndDelete(req.params.id)
@@ -54,12 +54,24 @@ router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
     }
 })
 
-//GET USER ORDERS
+//GET USER ORDERS BY ID
 
-router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
+router.get("/find/:userId", async (req, res) => {
 
     try {
         const orders = await Order.findOne({ userId: req.params.userId })
+        res.status(200).json(orders)
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
+})
+//GET USER ORDERS BY EMAIL
+
+router.get("/get/:emailId", async (req, res) => {
+
+    try {
+        const orders = await Order.findOne({ emailId: req.params.emailId })
         res.status(200).json(orders)
 
     } catch (error) {
@@ -80,7 +92,7 @@ router.get("/", async (req, res) => {
 });
 
 
-//GET ORDER BT ORDERID
+//GET ORDER BY ORDERID
 router.get("/:orderID", async (req, res) => {
     
     try {
