@@ -35,9 +35,9 @@ router.put("/:id", async (req, res) => {
 
 //UPDATE FIREBASE IMAGE LINK IN TO PRODUCT COLLECTION
 
-router.put("/:id/update-image", async (req, res) => {
+router.put("/:id/update-image/:type", async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id, type } = req.params;
         const { link } = req.body;
 
         const product = await Product.findById(id);
@@ -45,12 +45,24 @@ router.put("/:id/update-image", async (req, res) => {
             console.log("no product");
             return res.status(404).json({ message: 'Product not found' });
         }
-        console.log("link",link);
-        product.image.push({ src:link });
-        await product.save();
-    
+        console.log("link", link);
 
-   
+        if (type == "Normal") {
+
+            product.image.push({ src: link });
+        }
+        if (type == "Small") {
+
+            product.imageSmall.push({ src: link });
+        }
+        if (type == "Thumbnail") {
+
+            product.imageThumbnail.push({ src: link });
+        }
+        await product.save();
+
+
+
         return res.status(200).json(product);
     } catch (error) {
         console.error(error);
@@ -70,13 +82,13 @@ router.put("/:productID/delete-image", async (req, res) => {
             console.log("no product");
             return res.status(404).json({ message: 'Product not found' });
         }
-       // Remove the selected image from the array
-       product.image.splice(selectedIndex, 1);
+        // Remove the selected image from the array
+        product.image.splice(selectedIndex, 1);
 
-       await product.save();
-    
+        await product.save();
 
-   
+
+
         return res.status(200).json(product);
     } catch (error) {
         console.error(error);
@@ -102,7 +114,7 @@ router.delete("/:id", async (req, res) => {
 router.get("/find/:id", async (req, res) => {
 
     try {
-        const product = await Product.findOne({productID : req.params.id})
+        const product = await Product.findOne({ productID: req.params.id })
         res.status(200).json(product)
 
     } catch (error) {

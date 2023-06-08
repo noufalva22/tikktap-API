@@ -8,16 +8,26 @@ const ProductSchema = new mongoose.Schema(
     category: { type: String },
     image: [
       {
-        src:{
-          type: String, required: true
+        src: {
+          type: String, 
         }
       },
     ],
 
     imageSmall: [
-
-      { type: String, required: true },
-    ],
+      {
+        src: {
+          type: String, 
+        }
+      },
+    ],  
+    imageThumbnail: [
+      {
+        src: {
+          type: String, 
+        }
+      },
+    ],  
     MRP: { type: String },
     price: { type: Number, required: true },
     inStock: { type: Boolean, default: true }
