@@ -84,6 +84,8 @@ router.put("/:productID/delete-image", async (req, res) => {
         }
         // Remove the selected image from the array
         product.image.splice(selectedIndex, 1);
+        product.imageSmall.splice(selectedIndex, 1);
+        product.imageThumbnail.splice(selectedIndex, 1);
 
         await product.save();
 

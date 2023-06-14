@@ -20,12 +20,24 @@ router.post('/', async (req, res) => {
 })
 
 
-//GET ALL PROFILE LOG
+//GET ALL PROFILE LOG OF A USER
 
 router.get("/:username", async (req, res) => {
 
     try {
         const allProfileVisitdata = await ProfileVisitLog.find({ username: req.params.username })
+        res.status(200).json(allProfileVisitdata)
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
+})
+//GET ALL PROFILE
+
+router.get("/", async (req, res) => {
+
+    try {
+        const allProfileVisitdata = await ProfileVisitLog.find()
         res.status(200).json(allProfileVisitdata)
 
     } catch (error) {
