@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs'
 import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken"
 import nodemailer from 'nodemailer';
+import crypto from 'crypto'
+
 
 router.post("/register", async (req, res, next) => {
     const salt = bcrypt.genSaltSync(10);
@@ -80,6 +82,7 @@ router.post("/login", async (req, res, next) => {
 
 })
 const otpMap = new Map();
+
 router.post("/send-otp", async (req, res, next) => {
     const email = req.body.email;
     const otp = Math.floor(100000 + Math.random() * 900000);
@@ -96,8 +99,15 @@ router.post("/send-otp", async (req, res, next) => {
     const mailOptions = {
         from: 'noufalva91@gmail.com',
         to: email,
-        subject: 'OTP for login',
-        text: `Your OTP is ${otp}. Please use this to login.`
+        subject: 'One-Time Password (OTP) for Login – tikktap',
+        html: `<p>Dear User,</p>
+        <p>You are receiving this email because you have requested a one-time password (OTP) to log in to your Tikktap account. Please use the OTP provided below to access your account:</p>
+        <p style="font-size: 24px;">OTP: ${otp}</p>
+        <p>If you did not initiate this request or no longer wish to log in, you can safely ignore this email. The OTP is valid for a limited time only.</p>
+        <p>Please note that for security purposes, the OTP should be kept confidential and not shared with anyone. It is a one-time code and will expire after a certain period of time.</p>
+        <p>Thank you for using Tikktap.</p>
+        <p>Best regards,</p>
+        <p>Tikktap Support Team</p>`
     };
     otpMap.set(email, otp); // store otp for verification
     // console.log(otpMap);
@@ -128,5 +138,97 @@ router.post("/verify-otp", async (req, res, next) => {
 
 })
 
+//Password reset link generate and send email
+
+
+router.post('/forgot-password', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        const token = crypto.randomBytes(20).toString('hex');
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
+
+        await user.save();
+
+        //sending mail
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'noufalva91@gmail.com',
+                pass: 'hunoxkwlpftzpedg'
+            }
+        });
+
+        const mailOptions = {
+            from: 'noufalva91@gmail.com',
+            to: email,
+            subject: 'Forgot Password Token',
+            html: `<p>Dear User,</p>
+<p>We have received a request to reset your password for your Tikktap account. To proceed with the password reset process, please click the link below:</p>
+<p><a href="http://localhost:3000/reset-password/${token}">Click here</a></p>
+<p>If you did not initiate this request or no longer wish to reset your password, you can safely ignore this email. Your existing password will remain unchanged.</p>
+<p>Please note that this link will expire after 1 hour, so make sure to reset your password promptly.</p>
+<p>Thank you for using Tikktap.</p>
+<p>Best regards,</p>
+<p>The Tikktap Team</p>`
+        };
+
+        // console.log(otpMap);
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                // console.log(error);
+                res.status(500).json({ message: 'Failed to send OTP' });
+            } else {
+                // console.log('Email sent: ' + info.response);
+                otpMap.set(email, otp); // store otp for verification
+                res.json({ message: 'OTP sent successfully' });
+            }
+        });
+
+        res.json({ message: 'Password reset email sent.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+});
+
+//validating token
+
+router.post('/reset-password/:token', async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid or expired token.' });
+        }
+
+        // Set the new password and clear the token and expiration
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(password, salt);
+        user.password = hash;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+
+        res.json({ message: 'Password reset successful.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+});
 
 export default router
