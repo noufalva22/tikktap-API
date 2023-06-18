@@ -1,11 +1,11 @@
 import express from "express"
 import Product from "../models/Product.js";
-import { verifyTokenAndAdmin } from "./verifyToken.js";
+import { verifyToken, verifyTokenAndAdmin } from "./verifyToken.js";
 
 const router = express.Router();
 
 //ADD
-router.post('/', async (req, res) => {
+router.post('/', verifyTokenAndAdmin, async (req, res) => {
     const newProduct = new Product(req.body)
     try {
         const savedProduct = await newProduct.save()
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
 
 //UPDATE
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",verifyTokenAndAdmin, async (req, res) => {
     try {
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id,
@@ -35,7 +35,7 @@ router.put("/:id", async (req, res) => {
 
 //UPDATE FIREBASE IMAGE LINK IN TO PRODUCT COLLECTION
 
-router.put("/:id/update-image/:type", async (req, res) => {
+router.put("/:id/update-image/:type",verifyTokenAndAdmin, async (req, res) => {
     try {
         const { id, type } = req.params;
         const { link } = req.body;
@@ -72,7 +72,7 @@ router.put("/:id/update-image/:type", async (req, res) => {
 
 //delete selected image
 
-router.put("/:productID/delete-image", async (req, res) => {
+router.put("/:productID/delete-image", verifyTokenAndAdmin, async (req, res) => {
     try {
         const { productID } = req.params;
         const { selectedIndex } = req.body;
@@ -100,7 +100,7 @@ router.put("/:productID/delete-image", async (req, res) => {
 
 //DELETE PRODUCT
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",verifyTokenAndAdmin, async (req, res) => {
 
     try {
         await Product.findByIdAndDelete(req.params.id)
@@ -126,7 +126,7 @@ router.get("/find/:id", async (req, res) => {
 
 //GET ALL PRODUCT
 
-router.get("/", async (req, res) => {
+router.get("/",  async (req, res) => {
     const qNew = req.query.new;
     const qCategory = req.query.categories;
     console.log("Inside Product");

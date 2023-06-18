@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
 
 //UPDATE USERDATA
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",verifyTokenAndAuthorization,  async (req, res) => {
 
     try {
         const updatedUser = await UserData.findByIdAndUpdate(
@@ -38,7 +38,7 @@ router.put("/:id", async (req, res) => {
 
 })
 //UPDATE ACCOUNTS
-router.put("/:userId/accounts/:accountId", async (req, res) => {
+router.put("/:userId/accounts/:accountId", verifyTokenAndAuthorization, async (req, res) => {
     // console.log("1");
 
     try {
@@ -69,7 +69,7 @@ router.put("/:userId/accounts/:accountId", async (req, res) => {
 
 //DELETE USERDATA
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
 
     try {
         await UserData.findByIdAndDelete(req.params.id)
@@ -83,7 +83,7 @@ router.delete("/:id", async (req, res) => {
 
 //GET ALL 
 
-router.get("/", async (req, res) => {
+router.get("/",verifyTokenAndAdmin, async (req, res) => {
     try {
         const ALL_USER = await UserData.find();
         res.status(200).json(ALL_USER);

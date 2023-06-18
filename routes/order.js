@@ -43,7 +43,7 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
 
 //DELETE ORDER
 
-router.delete("/:id",  async (req, res) => {
+router.delete("/:id",verifyTokenAndAdmin,  async (req, res) => {
 
     try {
         await Order.findByIdAndDelete(req.params.id)
@@ -54,9 +54,9 @@ router.delete("/:id",  async (req, res) => {
     }
 })
 
-//GET USER ORDERS BY ID
+//GET ORDER  BY USERID
 
-router.get("/find/:userId", async (req, res) => {
+router.get("/find/:userId",verifyToken, async (req, res) => {
 
     try {
         const orders = await Order.findOne({ userId: req.params.userId })
@@ -68,7 +68,7 @@ router.get("/find/:userId", async (req, res) => {
 })
 //GET USER ORDERS BY EMAIL
 
-router.get("/get/:emailId", async (req, res) => {
+router.get("/get/:emailId",verifyTokenAndAdmin, async (req, res) => {
 
     try {
         const orders = await Order.findOne({ emailId: req.params.emailId })
@@ -81,7 +81,7 @@ router.get("/get/:emailId", async (req, res) => {
 
 //GET ALL 
 
-router.get("/", async (req, res) => {
+router.get("/",verifyTokenAndAdmin, async (req, res) => {
     console.log("Get all");
     try {
         const orders = await Order.find();
@@ -93,7 +93,7 @@ router.get("/", async (req, res) => {
 
 
 //GET ORDER BY ORDERID
-router.get("/:orderID", async (req, res) => {
+router.get("/:orderID",verifyTokenAndAdmin, async (req, res) => {
     
     try {
         const order = await Order.findOne({orderID : req.params.orderID});

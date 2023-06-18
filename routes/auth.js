@@ -67,8 +67,10 @@ router.post("/login", async (req, res, next) => {
         );
 
         const { password, isAdmin, ...otherDetails } = user._doc;
-        res.cookie("access_token", accessToken, {
-            httpOnly: true,
+        res.cookie('access_token', accessToken, {
+            httpOnly: true, // Cookie is only accessible by the server
+            secure: false, // Cookie can be sent over non-secure connections
+            sameSite: 'strict' // Cookie is only sent for same-site requests
         })
             .status(200)
             .json({ ...otherDetails, isAdmin, accessToken });
