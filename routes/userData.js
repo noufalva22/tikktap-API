@@ -18,11 +18,11 @@ router.post('/', async (req, res) => {
 
 //UPDATE USERDATA
 
-router.put("/:id",verifyTokenAndAuthorization,  async (req, res) => {
+router.put("/:id/:userId",verifyTokenAndAuthorization,  async (req, res) => {
 
     try {
         const updatedUser = await UserData.findByIdAndUpdate(
-            req.params.id,
+            req.params.userId,
             {
                 $set: req.body,
             },
@@ -38,7 +38,7 @@ router.put("/:id",verifyTokenAndAuthorization,  async (req, res) => {
 
 })
 //UPDATE ACCOUNTS
-router.put("/:userId/accounts/:accountId", verifyTokenAndAuthorization, async (req, res) => {
+router.put("/:id/:userId/accounts/:accountId", verifyTokenAndAuthorization, async (req, res) => {
     // console.log("1");
 
     try {
