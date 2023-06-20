@@ -83,6 +83,16 @@ router.post("/login", async (req, res, next) => {
 
 
 })
+router.get("/:id", async (req, res) => {
+
+    try {
+        const user = await User.findOne({ email: req.params.id })
+        res.status(200).json(user)
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
+})
 const otpMap = new Map();
 
 router.post("/send-otp", async (req, res, next) => {
@@ -167,6 +177,7 @@ router.post('/forgot-password', async (req, res) => {
                 pass: 'hunoxkwlpftzpedg'
             }
         });
+        let domine= 'http://naufalkareem.com/'
 
         const mailOptions = {
             from: 'noufalva91@gmail.com',
@@ -174,7 +185,7 @@ router.post('/forgot-password', async (req, res) => {
             subject: 'Forgot Password Token',
             html: `<p>Dear User,</p>
 <p>We have received a request to reset your password for your Tikktap account. To proceed with the password reset process, please click the link below:</p>
-<p><a href="http://localhost:3000/reset-password/${token}">Click here</a></p>
+<p><a href="${domine}/reset-password/${token}">Click here</a></p>
 <p>If you did not initiate this request or no longer wish to reset your password, you can safely ignore this email. Your existing password will remain unchanged.</p>
 <p>Please note that this link will expire after 1 hour, so make sure to reset your password promptly.</p>
 <p>Thank you for using Tikktap.</p>

@@ -65,15 +65,34 @@ router.post('/account/', async (req, res) => {
 //GET ALL SOCIAL LOG
 
 router.get("/account/:username", async (req, res) => {
-
     try {
-        const allSocialVisitLog = await SocialsVisitLog.find({ username: req.params.username })
-        res.status(200).json(allSocialVisitLog)
+        const pipeline = [
+            { $match: { username: req.params.username } },
+            {
+                $group: {
+                    _id: "$account",
+                    count: { $sum: 1 }
+                }
+            }
+        ];
 
+        const allSocialVisitLog = await SocialsVisitLog.aggregate(pipeline);
+
+        res.status(200).json(allSocialVisitLog);
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json(error);
     }
 })
+// router.get("/account/:username", async (req, res) => {
+
+//     try {
+//         const allSocialVisitLog = await SocialsVisitLog.find({ username: req.params.username })
+//         res.status(200).json(allSocialVisitLog)
+
+//     } catch (error) {
+//         res.status(500).json(error)
+//     }
+// })
 
 
 export default router
