@@ -4,7 +4,7 @@ const UserSchema = new mongoose.Schema({
 
     username: {
         type: String,
-        required: true,
+        // required: true,
     },
     ip: {
         type: String,
@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     },
     account: {
         type: String,
-        required: true,
+        // required: true,
     },
     
 

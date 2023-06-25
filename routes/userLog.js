@@ -19,6 +19,24 @@ router.post('/', async (req, res) => {
     }
 })
 
+//for data migration
+router.post('/migrate', async (req, res) => {
+    try {
+      const accountLogs = req.body; // Assuming req.body is an array of objects
+  
+      const savedLogs = await Promise.all(
+        accountLogs.map(async (log) => {
+          const newLog = new ProfileVisitLog(log);
+          return await newLog.save();
+        })
+      );
+  
+      res.status(200).json(savedLogs);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  });
+
 
 //GET ALL PROFILE LOG OF A USER
 
@@ -61,6 +79,22 @@ router.post('/account/', async (req, res) => {
         res.status(500).json(error)
     }
 })
+router.post('/account/migrate', async (req, res) => {
+    try {
+      const accountLogs = req.body; // Assuming req.body is an array of objects
+  
+      const savedLogs = await Promise.all(
+        accountLogs.map(async (log) => {
+          const newLog = new SocialsVisitLog(log);
+          return await newLog.save();
+        })
+      );
+  
+      res.status(200).json(savedLogs);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  });
 
 //GET ALL SOCIAL LOG
 
@@ -83,6 +117,7 @@ router.get("/account/:username", async (req, res) => {
         res.status(500).json(error);
     }
 })
+//old code
 // router.get("/account/:username", async (req, res) => {
 
 //     try {
@@ -93,6 +128,14 @@ router.get("/account/:username", async (req, res) => {
 //         res.status(500).json(error)
 //     }
 // })
+
+//save activity log
+
+
+
+//save website traffic
+
+
 
 
 export default router

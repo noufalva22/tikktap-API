@@ -61,7 +61,7 @@ router.post("/login", async (req, res, next) => {
                 isAdmin: user.isAdmin
             },
             process.env.JWT,
-            { expiresIn: "2d" }
+            { expiresIn: "15d" }
 
 
         );

@@ -9,8 +9,10 @@ import userDataRoute from './routes/userData.js'
 import paymentRoute from './routes/paymentGateway.js'
 import sendSMS from './routes/sendSMS.js'
 import UserLog from './routes/userLog.js'
+import websiteTraffic from './routes/WebsiteTraffic.js';
 import cors from "cors";
 import cookieParser from "cookie-parser";
+
 const app = express()
 dotenv.config();
 const connect = async () => {
@@ -34,7 +36,7 @@ mongoose.connection.on("connected", () => {
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://www.naufalkareem.com'],
+    origin: ['http://localhost:3000','http://localhost:3001', 'https://www.naufalkareem.com','https://www.pulze.naufalkareem.com' ],
     credentials: true // Allow credentials (cookies)
 }));
 // app.use(cors())
@@ -52,7 +54,10 @@ app.use("/api/products", productRoute)
 app.use("/api/order", orderRoute)
 app.use("/api/paynow", paymentRoute)
 app.use("/api/sendSMS", sendSMS)
-app.use("/api/userLog", UserLog)
+app.use("/api/log", UserLog)
+app.use("/api/websiteLog", websiteTraffic)
+
+
 
 app.get('/', (req, res) => {
     res.send("Welcome Backend")
