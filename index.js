@@ -9,7 +9,7 @@ import userDataRoute from './routes/userData.js'
 import paymentRoute from './routes/paymentGateway.js'
 import sendSMS from './routes/sendSMS.js'
 import UserLog from './routes/userLog.js'
-import websiteTraffic from './routes/WebsiteTraffic.js';
+import websiteTraffic from './routes/websiteTraffic.js';
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
