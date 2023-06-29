@@ -50,6 +50,35 @@ router.get("/:username", async (req, res) => {
         res.status(500).json(error)
     }
 })
+
+router.get("/chartData/:username", async (req, res) => {
+  try {
+    const allProfileVisitData = await ProfileVisitLog.aggregate([
+      {
+        $match: { username: req.params.username }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m", date: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ]);
+
+    const data = allProfileVisitData.map((item) => item.count);
+    const labels = allProfileVisitData.map((item) => item._id);
+
+    res.status(200).json({ data, labels });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 //GET ALL PROFILE
 
 router.get("/", async (req, res) => {
@@ -96,7 +125,7 @@ router.post('/account/migrate', async (req, res) => {
     }
   });
 
-//GET ALL SOCIAL LOG
+//GET ALL SOCIAL LOG USERNAME 
 
 router.get("/account/:username", async (req, res) => {
     try {
