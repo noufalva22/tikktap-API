@@ -6,7 +6,16 @@ import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken"
 import nodemailer from 'nodemailer';
 import crypto from 'crypto'
+import aws from "aws-sdk";
 
+aws.config.update({
+    accessKeyId: 'AKIAYBI5AMPF6W3RNOGQ',
+    secretAccessKey: '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',
+    region: 'eu-west-1'
+});
+const workMailTransport = nodemailer.createTransport({
+    SES: new aws.SES({ apiVersion: '2010-12-01' })
+});
 
 router.post("/register", async (req, res, next) => {
     const salt = bcrypt.genSaltSync(10);
@@ -103,14 +112,16 @@ router.post("/send-otp", async (req, res, next) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'noufalva91@gmail.com',
-            pass: 'hunoxkwlpftzpedg'
+            user: 'tikktap@gmail.com',
+            pass: 'iqsidgribvibqncr'
         }
     });
-    // console.log(otp, email);
+    console.log(otp, email);
+
     const mailOptions = {
-        from: 'noufalva91@gmail.com',
-        to: email,
+        from: 'tikktap@gmail.com',
+        // to: email,
+        to: 'noufalva@outlook.com',
         subject: 'One-Time Password (OTP) for Login – tikktap',
         html: `<p>Dear User,</p>
         <p>You are receiving this email because you have requested a one-time password (OTP) to log in to your Tikktap account. Please use the OTP provided below to access your account:</p>
@@ -122,7 +133,7 @@ router.post("/send-otp", async (req, res, next) => {
         <p>Tikktap Support Team</p>`
     };
     otpMap.set(email, otp); // store otp for verification
-    // console.log(otpMap);
+    console.log(otpMap);
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             // console.log(error);
@@ -133,6 +144,15 @@ router.post("/send-otp", async (req, res, next) => {
             res.json({ message: 'OTP sent successfully' });
         }
     });
+
+    //aws work mail
+    // workMailTransport.sendMail(mailOptions, (error, info) => {
+    //     if (error) {
+    //         console.log('Error sending email:', error);
+    //     } else {
+    //         console.log('Email sent:', info.response);
+    //     }
+    // });
 
 })
 router.post("/verify-otp", async (req, res, next) => {
@@ -168,24 +188,30 @@ router.post('/forgot-password', async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
 
         await user.save();
+        //old
 
         //sending mail
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'noufalva91@gmail.com',
-                pass: 'hunoxkwlpftzpedg'
+                // user: 'noufalva91@gmail.com',
+                // pass: 'hunoxkwlpftzpedg'
+
+                user: 'tikktap@gmail.com',
+                pass: 'iqsidgribvibqncr'
             }
         });
-        let domine= 'http://naufalkareem.com/'
+
+        //to change
+        let domain = 'http://naufalkareem.com'
 
         const mailOptions = {
-            from: 'noufalva91@gmail.com',
+            from: 'tikktap@gmail.com',
             to: email,
             subject: 'Forgot Password Token',
             html: `<p>Dear User,</p>
 <p>We have received a request to reset your password for your Tikktap account. To proceed with the password reset process, please click the link below:</p>
-<p><a href="${domine}/reset-password/${token}">Click here</a></p>
+<p><a href="${domain}/reset-password/${token}">Click here</a></p>
 <p>If you did not initiate this request or no longer wish to reset your password, you can safely ignore this email. Your existing password will remain unchanged.</p>
 <p>Please note that this link will expire after 1 hour, so make sure to reset your password promptly.</p>
 <p>Thank you for using Tikktap.</p>

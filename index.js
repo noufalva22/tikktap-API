@@ -57,7 +57,8 @@ app.use("/api/sendSMS", sendSMS)
 app.use("/api/log", UserLog)
 app.use("/api/websiteLog", websiteTraffic)
 
-
+// const cookie = document.cookie;
+// console.log("cookie", cookie);
 
 app.get('/', (req, res) => {
     res.send("Welcome Backend")
