@@ -8,11 +8,7 @@ import nodemailer from 'nodemailer';
 import crypto from 'crypto'
 import aws from "aws-sdk";
 
-aws.config.update({
-    accessKeyId: 'AKIAYBI5AMPF6W3RNOGQ',
-    secretAccessKey: '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',
-    region: 'eu-west-1'
-});
+
 const workMailTransport = nodemailer.createTransport({
     SES: new aws.SES({ apiVersion: '2010-12-01' })
 });
